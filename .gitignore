@@ -4,14 +4,15 @@
 
 
 #
-# config files (keep em secret)
+# Just dont track binaries
 #
-/bin/config.ini
-/bin/imgui.ini
+/bin
+/bin/
+/bin/**/*
 
 
 # ensure not main file
-!/git-list/*.cpp
+!/src/*.cpp
 
 
 #
@@ -26,10 +27,3 @@
 #
 *.deb
 */**/*.deb
-/git-list/release/*
-/git-list/release/**/*
-
-#
-# External libs (ImGui)
-#
-lib/imgui/
