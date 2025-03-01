@@ -1,0 +1,35 @@
+# Ide project files
+# Add your ide here
+/.vscode
+
+
+#
+# config files (keep em secret)
+#
+/bin/config.ini
+/bin/imgui.ini
+
+
+# ensure not main file
+!/git-list/*.cpp
+
+
+#
+# Object files
+#
+*.o
+*/**/*.o
+
+
+#
+# Debian packages
+#
+*.deb
+*/**/*.deb
+/git-list/release/*
+/git-list/release/**/*
+
+#
+# External libs (ImGui)
+#
+lib/imgui/
