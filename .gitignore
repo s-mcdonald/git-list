@@ -6,9 +6,9 @@
 #
 # Just dont track binaries
 #
-/bin
-/bin/
+/bin/*
 /bin/**/*
+!/bin/README.md
 
 
 # ensure not main file
