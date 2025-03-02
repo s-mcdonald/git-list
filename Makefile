@@ -28,7 +28,7 @@ SRC += $(INC_DIR)/gr/git-branch_meta.cpp
 
 LIBS = -lgit2
 
-CXXFLAGS += -I$(LIB_DIR)/benhoyt/ini/inih
+CXXFLAGS += -I$(LIB_DIR)/benhoyt/inih
 CXXFLAGS += -I$(INC_DIR)/gr
 CXXFLAGS += -I$(INC_DIR)/io
 
