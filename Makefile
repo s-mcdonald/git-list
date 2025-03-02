@@ -3,6 +3,7 @@ SRC_DIR = ./src
 LIB_DIR = ../../vendor
 INC_DIR = ../../includes
 TRG_PKG = ./package/git-list/usr/bin/git-list
+TRG_PTH = ../../build/debian/arm64/bin/git-list
 
 
 # check to see if we are pointing to correct location
@@ -38,6 +39,7 @@ all: $(TARGET)
 $(TARGET): $(SRC)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) $(LIBS)
 	cp $(TARGET) $(TRG_PKG)
+	cp $(TARGET) $(TRG_PTH)
 	dpkg-deb --build ./package/git-list/
 
 clean:
