@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component xmlns="http://www.freedesktop.org/standards/appstream">
+    <id>com.sammcdonald.git-list</id>
+    <name>Git List</name>
+    <metadata_license>MIT</metadata_license>
+    <summary>A Git extension to list branches with remotes</summary>
+    <description>
+        This tool provides a simple way to list all local and remote Git branches in your repositories.
+        Useful for developers working with multiple remotes and branches in Git repositories.
+    </description>
+
+    <developer id="sam.mcdonald@outlook.com.au">
+        <name>Sam McDonald</name>
+        <email>sam.mcdonald@outlook.com.au</email>
+    </developer>
+
+    <url type="homepage">https://github.com/s-mcdonald/GitReal</url>
+    <categories>
+        <category>Utility</category>
+    </categories>
+
+    <tags xmlns="http://www.freedesktop.org/standards/appstream/tags">
+        <tag>git</tag>
+        <tag>development</tag>
+    </tags>
+
+    <keywords>
+      <keyword translate="no">IDE</keyword>
+      <keyword>development</keyword>
+      <keyword>programming</keyword>
+    </keywords>
+
+    <screenshots>
+        <screenshot type="default">
+            <caption>The options dialog</caption>
+            <image>https://git-scm.com/images/logos/2color-lightbg@2x.png</image>
+        </screenshot>
+    </screenshots>
+
+    <!-- Icon for AppCenter -->
+    <!-- <icon type="image/png">usr/share/icons/hicolor/scalable/apps/git.svg</icon> -->
+
+</component>

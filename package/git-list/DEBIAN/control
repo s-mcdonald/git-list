@@ -1,0 +1,11 @@
+Package: git-list
+Version: 0.1
+Maintainer: Sam McDonald
+Homepage: https://github.com/s-mcdonald/git-list
+Architecture: amd64
+Description: Git Extension to list branches with remotes.
+Depends: libgit2-1.7, libgit2-dev 
+License: MIT
+Section: vcs
+Priority: optional
+Standards-Version: 4.5.1

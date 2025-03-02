@@ -27,3 +27,8 @@
 #
 *.deb
 */**/*.deb
+package/git-list/usr/bin/git-list
+package/git-list.deb
+package/git-list/bin/
+package/git-list/bin/**
+
