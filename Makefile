@@ -24,7 +24,7 @@ TARGET = $(TRG_DIR)/git-list
 SRC = $(SRC_DIR)/git-list.cpp 
 
 SRC += $(INC_DIR)/io/io.cpp
-SRC += $(INC_DIR)/gr/gr-lib.cpp
+SRC += $(INC_DIR)/gr/gr-cli-options.cpp
 SRC += $(INC_DIR)/gr/git-branch_meta.cpp
 
 

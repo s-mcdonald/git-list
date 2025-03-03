@@ -47,6 +47,7 @@
 #include "git-branch_meta.h"
 #include "gr-lib.h"
 #include "io.h"
+#include "gr-cli-options.h"
 
 // Global variables for tracking memory usage
 static size_t total_memory_allocated = 0;
@@ -59,36 +60,24 @@ void print_usage() {
               << "  -s, --simple    Simple list display\n";
 }
 
-struct Inputoptions
-{
+struct InputOptions {
     bool show_wip = false;
     bool simple_list_mode = false;
 };
 
 int main(int argc, char* argv[]) 
 {
-    Inputoptions options;
-
-    for (int i = 1; i < argc; ++i) {
-        std::string arg = argv[i];
-
-        if (arg == "-h" || arg == "--help") {
-            print_usage();
-            return 0;
-        }
-
-        if (arg == "-w" || arg == "--wip") {
-            options.show_wip = true;
-        }
-
-        if (arg == "-s" || arg == "--simple") {
-            options.simple_list_mode = true;
-        }
+    struct InputOptions options;
+    {
+        // allocate on stack so we can pop it off
+        GitReal::InputFlags iflags(argc, argv);
+        options.simple_list_mode = iflags.has_flag("s");
+        options.show_wip = iflags.has_flag("w");
     }
 
     const char * repo_path = "./";
 
-    GitReal::Console console = GitReal::Console();
+    GitReal::Console console;
  
     if (git_libgit2_init() < 0) {
         std::cerr << "Failed to initialize libgit2" << std::endl;
@@ -110,16 +99,14 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-
     {
-        GitReal::BranchMetaInspector inspector = GitReal::BranchMetaInspector(repo, iter);
+        GitReal::BranchMetaInspector inspector(repo, iter);
         const auto branches = inspector.fetch_all_local_branch_meta(options.show_wip);
     
         if (true == options.simple_list_mode)
             console.print_simple_list(branches);
         else
-            console.print_branch_tree(branches, options.show_wip);
-
+            console << branches;
     }
 
     git_branch_iterator_free(iter);
