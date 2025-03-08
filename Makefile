@@ -10,7 +10,7 @@ TRG_PTH = ../../build/debian/arm64/bin/git-list
 # 
 # Available options are DEBUG, RELEASE
 #
-BUILD_MODE = DEBUG 
+BUILD_MODE = RELEASE 
 
 
 # check to see if we are pointing to correct location
