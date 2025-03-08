@@ -49,11 +49,25 @@
 #include "gr_io.h"
 #include "gr_cli_options.h"
 #include "gr_repo_state.h"
+#include "sm_log.h"
 
 // Global variables for tracking memory usage
 static size_t s_total_memory_allocated = 0;
 static int s_total_allocations = 0;
 static int s_total_deallocations = 0;
+
+#ifdef DEBUG
+constexpr char* GITLIST_FAILED_INIT_LIBGIT2 = "Failed to initialize libgit2";
+constexpr char* GITLIST_FAILED_OPEN_REPO = "Failed to open libgit2";
+constexpr char* GITLIST_FAILED_CREATE_ITERATOR = "Failed to create branchiterator";
+
+#else
+constexpr char* GITLIST_FAILED_INIT_LIBGIT2 = "Unable to open repository.\n Please check that you are in the correct directory.\n";
+constexpr char* GITLIST_FAILED_OPEN_REPO = GITLIST_FAILED_INIT_LIBGIT2;
+constexpr char* GITLIST_FAILED_CREATE_ITERATOR = GITLIST_FAILED_INIT_LIBGIT2;
+
+#endif
+
 
 #ifdef DEBUG
 
@@ -97,6 +111,9 @@ constexpr void print_usage() {
 
 int main(int argc, char* argv[]) 
 {
+    using namespace SamMcDonald;
+    Log::set_log_level(LogLevel::LDEBUG);
+
 #ifdef DEBUG
     std::cout << "DEBUG MODE:" << std::endl;
     std::cout << "" << std::endl;
@@ -123,13 +140,14 @@ int main(int argc, char* argv[])
         GitReal::Console console;
 
         if (git_libgit2_init() < 0) {
-            std::cerr << "Failed to initialize libgit2" << std::endl;
+            Log::err(LogLevel::LERROR, GITLIST_FAILED_INIT_LIBGIT2);
             return -1;
         }
 
         git_repository *repo = nullptr;
         if (git_repository_open(&repo, repo_path) != 0) {
             git_libgit2_shutdown();
+            Log::err(LogLevel::LWARNING, GITLIST_FAILED_OPEN_REPO);
             return -1;        
         }
 
@@ -138,7 +156,7 @@ int main(int argc, char* argv[])
         if (git_branch_iterator_new(&iter, repo, GIT_BRANCH_LOCAL) != 0) {
             git_repository_free(repo);
             git_libgit2_shutdown();
-            std::cerr << "Failed to create branch iterator." << std::endl;
+            Log::err(LogLevel::LERROR, GITLIST_FAILED_CREATE_ITERATOR);
             return -1;
         }
 

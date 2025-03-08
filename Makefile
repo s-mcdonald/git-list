@@ -30,6 +30,7 @@ TARGET = $(TRG_DIR)/git-list
 # Src files
 SRC = $(SRC_DIR)/git-list.cpp 
 
+SRC += $(INC_DIR)/sm/sm_log.cpp
 SRC += $(INC_DIR)/gr/gr_io.cpp
 SRC += $(INC_DIR)/gr/gr_cli_options.cpp
 SRC += $(INC_DIR)/gr/gr_repo_state.cpp
@@ -42,6 +43,7 @@ LIBS = -lgit2
 #
 CXXFLAGS += -I$(LIB_DIR)/benhoyt/inih
 CXXFLAGS += -I$(INC_DIR)/gr
+CXXFLAGS += -I$(INC_DIR)/sm
 CXXFLAGS += -I$(INC_DIR)/io
 
 #
