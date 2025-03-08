@@ -13,40 +13,42 @@ I will hopefully be porting most of my productivity commands to cpp over time as
 
 Example output
 
+#### Default List
+The default output will group the branches locally, by their remote.
+If a local branch does not track a remote branch then it will be listed below all other branches.
+
+```sh
+> git list
 ```
- upstream
-   develop 
-   master
+![Terminal Output](img/terminal-base.png)
 
- origin
-   feature/git-sync
 
- local
-   bug/fix-optimizer 
+
+#### Tracked Branches
+By default the command will group branches by the remote, in most cases this is enough information as we usually track to a branch of the same name.
+
+However if you want to se the tracked branch name, pass the  -t flag.
+
+```sh
+> git list -t
 ```
+![Terminal Output](img/terminal-t.png)
 
 
-Example output with the -w option
+#### Simple List
+The -s will show a simplified list simimalr to `git branch` Below is an example of -s with the -t option
+
+```sh
+> git list -s
 ```
- upstream
-   develop 
-   master
-
- origin
-   feature/git-sync [w]
-
- local
-   bug/fix-optimizer 
-```
+![Terminal Output](img/terminal-simple.png)
 
 
-Example when there are no remotes tracked
-```
- local
-   develop 
-   master
-   feature/git-sync [w]
-   bug/fix-optimizer 
+#### WIP Commit
+If you use WIP commits, the -w will show you which branches have a current WIP commit.
+
+```sh
+> git list -w
 ```
 
 
