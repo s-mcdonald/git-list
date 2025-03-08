@@ -45,10 +45,10 @@
 #include <sstream>
 #include <algorithm>
 
-#include "gr-lib.h"
-#include "io.h"
-#include "gr-cli-options.h"
-#include "git-repo-state.h"
+#include "gr_lib.h"
+#include "gr_io.h"
+#include "gr_cli_options.h"
+#include "gr_repo_state.h"
 
 // Global variables for tracking memory usage
 static size_t s_total_memory_allocated = 0;
