@@ -36,6 +36,7 @@
  *****************************************************************************/
 
 #include <iostream>
+#include <new> // Required for std::bad_alloc
 #include <iomanip>
 #include <git2.h>
 #include <unordered_map>
@@ -44,15 +45,49 @@
 #include <sstream>
 #include <algorithm>
 
-#include "git-branch_meta.h"
 #include "gr-lib.h"
 #include "io.h"
 #include "gr-cli-options.h"
+#include "git-repo-state.h"
 
 // Global variables for tracking memory usage
-static size_t total_memory_allocated = 0;
+static size_t s_total_memory_allocated = 0;
+static int s_total_allocations = 0;
+static int s_total_deallocations = 0;
 
-void print_usage() {
+#ifdef DEBUG
+
+void* operator new(std::size_t n) {
+    s_total_memory_allocated += n;
+    void* p = std::malloc(n);
+    if (!p) {
+        std::cerr << "Memory allocation failed" << std::endl;
+        std::exit(EXIT_FAILURE); 
+    }
+    s_total_allocations++;
+    return p;
+}
+
+void operator delete(void* p) noexcept {
+    std::free(p);
+    s_total_deallocations++;
+}
+
+void print_memory_usage() {
+    std::cout 
+        << "Total memory : ( " 
+        << s_total_allocations 
+        << " / "
+        << s_total_deallocations
+        << " )" 
+        << " Total memory allocated/deallocated respectivly with Bytes:  " 
+        << s_total_memory_allocated
+        << std::endl;
+}
+#else
+void print_memory_usage() {}
+#endif
+constexpr void print_usage() {
     std::cout << "Usage: git list [options]\n"
               << "Options:\n"
               << "  -h, --help      Show this help message\n"
@@ -60,55 +95,64 @@ void print_usage() {
               << "  -s, --simple    Simple list display\n";
 }
 
-struct InputOptions {
-    bool show_wip = false;
-    bool simple_list_mode = false;
-};
-
 int main(int argc, char* argv[]) 
 {
+#ifdef DEBUG
+    std::cout << "DEBUG MODE:" << std::endl;
+    std::cout << "" << std::endl;
+#endif
+
     struct InputOptions options;
     {
-        // allocate on stack so we can pop it off
         GitReal::InputFlags iflags(argc, argv);
-        options.simple_list_mode = iflags.has_flag("s");
         options.show_wip = iflags.has_flag("w");
+        options.show_worktrees = iflags.has_flag("a");
+        options.simple_list_mode = iflags.has_flag("s");
+        options.show_tracked = iflags.has_flag("t");
+        options.show_help = iflags.has_flag("h");
+
+        if(options.show_help) {
+            print_usage();
+            return 0;
+        }
     }
-
-    const char * repo_path = "./";
-
-    GitReal::Console console;
  
-    if (git_libgit2_init() < 0) {
-        std::cerr << "Failed to initialize libgit2" << std::endl;
-        return -1;
-    }
-
-    git_repository *repo = nullptr;
-    if (git_repository_open(&repo, repo_path) != 0) {
-        git_libgit2_shutdown();
-        return -1;        
-    }
-
-    // we have a repo, so lets create an iterator to see what we find ;)
-    git_branch_iterator *iter = nullptr;
-    if (git_branch_iterator_new(&iter, repo, GIT_BRANCH_LOCAL) != 0) {
-        git_repository_free(repo);
-        git_libgit2_shutdown();
-        std::cerr << "Failed to create branch iterator." << std::endl;
-        return -1;
-    }
-
     {
-        GitReal::BranchMetaInspector inspector(repo, iter);
-        const auto branches = inspector.fetch_all_local_branch_meta(options.show_wip);
-    
-        if (true == options.simple_list_mode)
-            console.print_simple_list(branches);
-        else
-            console << branches;
+        const char * repo_path = "./";
+
+        GitReal::Console console;
+
+        if (git_libgit2_init() < 0) {
+            std::cerr << "Failed to initialize libgit2" << std::endl;
+            return -1;
+        }
+
+        git_repository *repo = nullptr;
+        if (git_repository_open(&repo, repo_path) != 0) {
+            git_libgit2_shutdown();
+            return -1;        
+        }
+
+        // we have a repo, so lets create an iterator to see what we find ;)
+        git_branch_iterator *iter = nullptr;
+        if (git_branch_iterator_new(&iter, repo, GIT_BRANCH_LOCAL) != 0) {
+            git_repository_free(repo);
+            git_libgit2_shutdown();
+            std::cerr << "Failed to create branch iterator." << std::endl;
+            return -1;
+        }
+
+        {
+            const auto repo_info = GitReal::Analyze::get_repository_info(repo, iter);
+
+            console.print_repo_info(repo_info, options);
+        }
+
+        git_branch_iterator_free(iter);
+        git_repository_free(repo);
     }
 
-    git_branch_iterator_free(iter);
-    git_repository_free(repo);
+#ifdef DEBUG
+    print_memory_usage();
+#endif
 }
